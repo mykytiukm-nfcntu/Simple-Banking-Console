@@ -1,0 +1,48 @@
+# --- Алмази та артефакти компіляції ---
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# --- Теки виводу (Maven / Gradle) ---
+target/
+build/
+out/
+bin/
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# --- Eclipse ---
+.metadata/
+.project
+.classpath
+.settings/
+*.launch
+bin/
+
+# --- Visual Studio Code ---
+.vscode/
+
+# --- Gradle ---
+.gradle/
+/build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# --- Maven ---
+.mvn/
+log/
+
+# --- Операційна система ---
+.DS_Store
+Thumbs.db
+*.txt
