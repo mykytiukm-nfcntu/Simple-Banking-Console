@@ -1,8 +1,10 @@
 package bank;
 
 public class Account extends TransactionParticipant {
+	CreditsManager credits;
 	public Account(String name) {
 		super(name);
+		this.credits = new CreditsManager(this);
 	}
 	
 	void ShowBalance() {
