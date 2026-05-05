@@ -1,53 +1,97 @@
 package bank;
 
+enum UserAction {
+	ShowBalance(1),
+	SendMoney(2),
+	ShowCredits(3),
+	MakeCredit(4),
+	Deposit(5),
+	Logout(6),
+	Exit(7);
+	
+	private final int value;
+
+    UserAction(int value) {
+        this.value = value;
+    }
+
+    public int getValue() { return value; }
+
+    public static UserAction fromInt(int i) {
+        for (UserAction s : UserAction.values()) {
+            if (s.value == i) return s;
+        }
+        throw new IllegalArgumentException("Unknown code: " + i);
+    }
+}
+
+class UserActionPicker {
+	UserAction pickUserAction() {
+		UserAction action;
+		while (true) {
+			for (UserAction _action : UserAction.values()) {
+				System.out.println(_action.name() + " - " + _action.getValue());
+			}
+		
+			try {
+				int actionI = Integer.parseInt(Programm.scanner.getNextLine());
+				action = UserAction.fromInt(actionI);
+				return action;
+			} catch(Exception ex) {
+				System.out.println("Please enter integers" + ex);
+			}
+		}
+	}
+}
+
 public class AccountWorker extends InputWorker {
 	Account account;
+	UserActionPicker actionPicker;
 	
 	@Override
 	public boolean userInputLoop() {
 		account = new Account(Session.authenticatedUserName);
-		Bank bank = Bank.getInstance();
+		bank = Bank.getInstance();
+		actionPicker = new UserActionPicker();
 		
+		System.out.println("Hello, " + account.name + "! What would you like today?\n\n");
 		outerLoop:
 		while (true) {
-			System.out.println("Hello, " + account.name + "! What would you like today?\n\n");
-			System.out.println("1 - Show balance"); // OK
-			System.out.println("2 - Send money");
-			System.out.println("3 - Credit");
-			System.out.println("4 - Deposit");
-			System.out.println("5 - Logout"); // OK
-			System.out.println("6 - Exit"); // OK
-			
-			try {
-				int action = Integer.parseInt(Programm.scanner.getNextLine());
+				UserAction action = actionPicker.pickUserAction();
 				switch(action) {
-				case 1:
+				case ShowBalance:
 					account.ShowBalance();
 					break;
-				case 2:
+				case SendMoney:
 					// "Alex"
 					account.makeMoneyFlow(account, new Account("Alex"), 1000);
 					break;
-				case 3:
+				case MakeCredit:
 					// 1000;
-					account.makeMoneyFlow(bank, account, 1000);
+					//account.makeMoneyFlow(bank, account, 1000);
+					
+					//displayFeeForCredit(amount);
+					//Yes -> makeCredit();
+					//No -> continue;
+					bank.makeCredit(account, 1000);
 					break;
-				case 4:
+				case ShowCredits:
+					account.displayCurrentCredits();
+					break;
+				case Deposit:
 					// 1000;
 					account.makeMoneyFlow(account, bank, 1000);
 					break;
-				case 5:
+				case Logout:
 					Session.authenticatedUserName = null;
 					return true;
-				case 6:
+				case Exit:
 					break outerLoop;
 				default:
 					System.out.println("Please enter integers less then 7");
 					continue;
 				}
-			} catch(Exception ex) {
-				System.out.println("Please enter integers" + ex);
-			}
+			System.out.println();
 		}
 		return false;
 	}
