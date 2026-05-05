@@ -14,4 +14,10 @@ public class Account extends TransactionParticipant {
 	void initDBUser() {
 		initUserInDB();
 	}
+	
+	void displayCurrentCredits() {
+		for (Credit credit : credits.getCredits()) {
+			System.out.println("");
+		}
+	}
 }

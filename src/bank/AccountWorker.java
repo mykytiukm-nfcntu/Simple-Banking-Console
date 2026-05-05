@@ -46,7 +46,12 @@ class UserActionPicker {
 
 public class AccountWorker extends InputWorker {
 	Account account;
+	Bank bank;
 	UserActionPicker actionPicker;
+	private void displayFeeForCredit(int amount) {
+		int fee = bank.displayFee(account, amount);
+		System.out.println("Fee for this credit will be " + fee + ", increasing each month");
+	}
 	
 	@Override
 	public boolean userInputLoop() {
