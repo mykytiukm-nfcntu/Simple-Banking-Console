@@ -6,6 +6,10 @@ public class Account extends TransactionParticipant {
 		super(name);
 		this.credits = new CreditsManager(this);
 	}
+	public Account(String name, int amount) {
+		super(name, amount);
+		this.credits = new CreditsManager(this);
+	}
 	
 	void ShowBalance() {
 		System.out.println(String.format("%s user has %d balance", this.name, this.balance));

@@ -75,7 +75,7 @@ class TransactionDBManager {
 
 	void changeCurrentAmount(int newAmount) {
 		Path path = Paths.get(accountsAmountsDBName);
-		
+
 		try {
 			List<String> updatedLines = Files.lines(path).map(line -> {
 				String[] parts = line.split(":");
@@ -90,21 +90,21 @@ class TransactionDBManager {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	void initUserInDB() {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(accountsAmountsDBName, true))) {
-            writer.write(this.participant.name + ":" + 0);
-            writer.newLine();
-        } catch (IOException e) {
-            System.err.println("Write error: " + e.getMessage());
-        }
+			writer.write(this.participant.name + ":" + 0);
+			writer.newLine();
+		} catch (IOException e) {
+			System.err.println("Write error: " + e.getMessage());
+		}
 	}
 }
 
 public abstract class TransactionParticipant {
 	String name;
 	int balance;
-	TransactionDBManager dbManager;
+	TransactionDBManager dbManager; // TODO: move to Bank
 
 	TransactionParticipant(String name) {
 		this.name = name;
@@ -112,30 +112,17 @@ public abstract class TransactionParticipant {
 		this.balance = this.dbManager.readCurrentAmount();
 	}
 
-	private boolean transactionValidate(TransactionParticipant from, TransactionParticipant to, int amount) {
-		if (from.balance < amount) {
-			return false;
-		}
-		return true;
-	}
-
-	boolean makeMoneyFlow(TransactionParticipant from, TransactionParticipant to, int amount) {
-		if (transactionValidate(from, to, amount) == false) {
-			return false;
-		}
-		dbManager.storeNewTransaction(from, to, amount);
-
-		from.updateBalance(amount, false);
-		to.updateBalance(amount, true);
-		
-		return true;
+	TransactionParticipant(String name, int amount) {
+		this.name = name;
+		dbManager = new TransactionDBManager(this);
+		this.balance = amount;
 	}
 	
 	void updateBalance(int transactionAmount, boolean isPlus) {
 		if (isPlus == false && balance < transactionAmount) {
 			throw new RuntimeException("Balance is not valid at this point");
 		}
-		
+
 		if (isPlus) {
 			balance += transactionAmount;
 		} else {
@@ -143,7 +130,7 @@ public abstract class TransactionParticipant {
 		}
 		dbManager.changeCurrentAmount(balance);
 	}
-	
+
 	void initUserInDB() {
 		this.dbManager.initUserInDB();
 	}
